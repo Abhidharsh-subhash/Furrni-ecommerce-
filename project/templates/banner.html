@@ -1,0 +1,30 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block heading %}
+<h1>Add new Banner</h1>
+{% endblock %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">New Banner</li>
+{% endblock %}
+
+{% block content %}
+<div class=" d-flex">
+    <!-- justify-content-center align-items-center -->
+    <div class="col-md-6 p-5 shadow-sm border rounded-3">
+        <!-- <h2 class="text-center mb-4 text-primary">Login Form</h2> -->
+        <form method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Banner</label>
+                <input type="file" class="form-control-lg border border-primary mx-2" name="banner" style="width: 25rem;"  required>
+            </div>
+            <div class="">
+                <button class="btn btn-primary" type="submit">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

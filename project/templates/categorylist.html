@@ -1,0 +1,219 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block heading %}
+<h1>Category list</h1>
+{% endblock %}
+
+{% block search %}
+<li class="nav-item d-block d-lg-none">
+    <a class="nav-link nav-icon search-bar-toggle " href="#">
+    </a>
+</li>
+{% endblock %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">Category list</li>
+{% endblock %}
+
+{% block content %}
+{% if not data %}
+<div class="table-responsive mt-3">
+    <p class="h3 text-center"><b>Search result does not exist</b></p>
+</div>
+{% else %}
+<form class="d-none d-md-flex input-group w-auto my-auto" method="post" action="{% url 'categorylist' %}">
+    {% csrf_token %}
+    <input autocomplete="off" type="search" class="form-control rounded" name="search"
+        placeholder='Search (ctrl + "/" to focus)' style="min-width:50vh" />
+    <button class="btn" type="submit" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+</form>
+<div class="table-responsive mt-3">
+    <table class="table table-hover table-bordered table-secondary text-center">
+        <thead>
+            <tr>
+                <th scope="col">SI.no</th>
+                <th scope="col">Category name</th>
+                <th scope="col">Offers</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr>
+                <th scope="row">{{forloop.counter}}</th>
+                <td>{{d.categoryname}}</td>
+                <td>
+                    <div style="display: flex; flex-direction: row;justify-content: center;">
+                        {% if not d.offerpercentage %}
+                        <form action="{% url 'catoffer' %}" class="mx-1" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="cid" value="{{d.categoryid}}">
+                            <input type="number" class="form-control-sm" name="offerpercentage" required >
+                            <button class="btn" type="submit" style="background-color: rgb(68, 217, 90);">apply</button>
+                        </form>
+                        {% else %}
+                        <div class="mt-2 h6">Offer:{{d.offerpercentage}}%</div>
+                        {% endif %}
+                        {% if not d.offerpercentage %}
+                        {% else %}
+                        <form action="{% url 'delcatoffer' %}" class='mx-2' method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="cid" value="{{d.categoryid}}">
+                            <button class="btn " type="submit"
+                                style="background-color: rgb(201, 46, 19);color: white;">clear</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Action
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-warning" data-bs-toggle="modal"
+                                    data-bs-target="#edit-{{d.categoryid}}" href="#"><i
+                                        class=" fa-solid fa-pen-to-square"></i>Edit</a></li>
+                            <li><a class="dropdown-item text-danger" data-bs-toggle="modal"
+                                    data-bs-target="#delete-{{d.categoryid}}" href="#"><i
+                                        class="fa-solid fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </div>
+                </td>
+
+                <!-- Offer -->
+                <div class="modal fade" id="offer-{{d.categoryid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog  ">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info">
+                                <h5 class="modal-title" id="exampleModalLabel">Add offer for category {{d.categoryname}}
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="">
+                                    <input type="hidden" value="{{d.categoryid}}" name="cid">
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label" for="form4Example1">Expiry date</label>
+                                        <input type="date" id="form4Example1" name="offerexpiry" value="" required
+                                            class="form-control" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label" for="form4Example1">percentage</label>
+                                        <input type="number" id="form4Example1" name="offerpercentage" value=""
+                                            minlength="1" required class="form-control" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label" for="form4Example1">Minimum amount</label>
+                                        <input type="number" id="form4Example1" name="offeramount" value=""
+                                            minlength="3" required class="form-control" />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-danger me-3"
+                                            data-bs-dismiss="modal">
+                                            cancel
+                                        </button>
+                                        <button type="submit" class="btn btn-outline-primary">Add</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- delete -->
+                <div class="modal fade" id="delete-{{d.categoryid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'delcat' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.categoryid}}" name="cid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Delete <a
+                                            class="ms-2" style="color: black;">{{d.categoryname}}</a></h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <i
+                                        class="fas fa-exclamation-triangle fa-4x text-danger d-flex justify-content-center"></i><br>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-warning me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- edit -->
+                <div class="modal fade" id="edit-{{d.categoryid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'editcat' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.categoryid}}" name="cid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Edit <a class="ms-2"
+                                            style="color: black;">{{d.categoryname}}</a></h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label" for="form4Example1">Category name</label>
+                                        <input type="text" id="form4Example1" name="categoryname"
+                                            value="{{d.categoryname}}" pattern="[A-Za-z]+" minlength="4" required
+                                            class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-danger me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-info">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
+<div class="pagination mx-3">
+    <span class="step-links">
+        {% if data.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ data.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ data.number }} of {{ data.paginator.num_pages }}.
+        </span>
+
+        {% if data.has_next %}
+            <a href="?page={{ data.next_page_number }}">next</a>
+            <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+{% endblock %}

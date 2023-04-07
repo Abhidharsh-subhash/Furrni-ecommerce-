@@ -1,0 +1,265 @@
+{% extends 'user.html' %}
+{% load static %}
+
+
+
+
+
+{% block head %}
+<h1>Checkout</h1>
+{% endblock %}
+
+{% block content %}
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show mt-2 mx-5 timer" role="alert"><i
+		class=" mx-2 fa-sharp fa-solid fa-triangle-exclamation"></i>
+	<strong>{{message}}</strong>
+	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+<div class="untree mt-5">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 mb-5 mb-md-0">
+				<h2 class="h3 mb-3 text-black">Billing Address</h2>
+				<div class="p-3 p-lg-5 border bg-white mb-5">
+					<form method="post" action="{% url 'address' %}">
+						{% csrf_token %}
+
+						<div class="form-group row">
+							<div class="col-md-6">
+								<label for="c_fname" class="text-black">First Name <span
+										class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="c_fname" name="firstname" required>
+							</div>
+							<div class="col-md-6">
+								<label for="c_lname" class="text-black">Last Name <span
+										class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="c_lname" name="lastname" required>
+							</div>
+						</div>
+						<div class="form-group row mt-2">
+							<div class="col-md-12">
+								<label for="c_address" class="text-black">Address <span
+										class="text-danger">*</span></label>
+								<textarea type="text" class="form-control" id="c_address" name="street"
+									placeholder="Address" required></textarea>
+							</div>
+						</div>
+
+						<div class="form-group row mt-2">
+							<div class="col-md-6">
+								<label for="c_state_country" class="text-black">State / Country <span
+										class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="c_state_country" name="state" required>
+							</div>
+							<div class="col-md-6">
+								<label for="c_postal_zip" class="text-black">Posta / Zip <span
+										class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="c_postal_zip" name="postalcode" required>
+							</div>
+						</div>
+
+						<div class="form-group row mt-2">
+							<div class="col-md-6">
+								<label for="c_email_address" class="text-black">Email Address <span
+										class="text-danger">*</span></label>
+								<input type="email" class="form-control" id="c_email_address" name="mail" required>
+							</div>
+							<div class="col-md-6">
+								<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="c_phone" name="phone" required
+									placeholder="Phone Number">
+							</div>
+						</div>
+						<button type="submit" class="btn btn-sm mt-4">Add address</button>
+					</form>
+				</div>
+				<div class="row mb-5">
+					<div class="col-md-12">
+						<h2 class="h3 mb-3 text-black">Coupon Code</h2>
+						<form method="post" action="{% url 'checkout' %}">
+							{% csrf_token %}
+							<input type="hidden" name="cid" value="{{datacp}}">
+							<div class="p-3 p-lg-5 border bg-white">
+								{% if cop == None %}
+								<label for="c_code" class="text-black mb-3">Enter your coupon code if you have
+									one</label>
+								<div class="input-group w-75 couponcode-wrap">
+									<input type="text" class="form-control me-2" value="" name="coupon"
+										aria-label="Coupon Code" required aria-describedby="button-addon2">
+									<div class="input-group-append">
+										<button class="btn btn-black btn-sm" type="submit"
+											id="button-addon2">Apply</button>
+									</div>
+								</div>
+								{% else %}
+								<label for="c_code" class="text-black fw-bold mb-3">Coupon applied</label>
+								<div class="input-group w-75 couponcode-wrap">
+									<input type="text" class="form-control me-2" value="{{cop}}" name="coupon"
+										aria-label="Coupon Code" required aria-describedby="button-addon2" readonly>
+								</div>
+								{% endif %}
+
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<form method="post" action="/paypal" id="myform">
+					{% csrf_token %}
+					{% if dataa %}
+					<div class='row mb-5'>
+						<div class="col-md-12">
+							<h2 class="h3 mb-3 text-black">Choose Address</h2>
+							<div class="p-2 p-lg-5 border bg-white inline-block">
+								<div>
+									{% for d in dataa %}
+									<input type="radio" class="my_address" id="html" name="address"
+										value="{{d.addressid}}">&emsp;
+									<label for="html"
+										class="text-uppercase"><b>{{d.street}},{{d.postalcode}},{{d.state}}</b></label><br>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+					</div>
+					{% else %}
+					<div class='row mb-5'>
+						<div class="col-md-12">
+							<h2 class="h3 mb-3 text-black">Choose Address</h2>
+							<div class="p-2 p-lg-5 border bg-white inline-block">
+								<div>
+									<h5>Add your address to proceed</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+					{% endif %}
+
+					<div class="row mb-5 mt-3">
+						<div class="col-md-12">
+							<h2 class="h3 mb-3 text-black">Your Order</h2>
+							<div class="p-3 p-lg-5 border bg-white">
+								<table class="table site-block-order-table mb-5">
+									<thead>
+										<th class="h4">Order summary</th>
+									</thead>
+									<div class="form-group mb-4">
+										<label for="c_order_notes" class="text-black">Order Notes</label>
+										<textarea name="ordernotes" id="c_order_notes" class="form-control"
+											placeholder="Write your notes here..."></textarea>
+									</div>
+									<tbody>
+										{% for d in datad %}
+										<tr>
+											<td>{{d.product.productname}}<strong class="mx-2">x</strong>{{d.quantity}}
+											</td>
+											<td>{% widthratio d.product.discountprice 1 d.quantity %}
+												{% if d.product.offerpercentage %}
+												<span style="color: #0aed39;font-size: medium;"><b>({{d.product.offerpercentage}}%
+														Off)</b></span>
+												{% endif %}
+											</td>
+										</tr>
+										{% endfor %}
+										{% if offer %}
+										<tr>
+											<td class="text-black font-weight-bold"><strong>Coupon discount</strong>
+											</td>
+											<td class="text-black font-weight-bold"><strong><i
+														class="fa-sharp fa-solid fa-indian-rupee-sign mx-2"></i>{{offer}}</strong>
+											</td>
+										</tr>
+										{% endif %}
+										<tr>
+											<td class="text-black font-weight-bold"><strong>Sub total</strong></td>
+											<td class="text-black font-weight-bold"><strong><i
+														class="fa-sharp fa-solid fa-indian-rupee-sign mx-2"></i>{{datap.total}}</strong>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+
+								{% if offer %}
+								<input type="hidden" name="did" value="{{offer}}">
+								{% else %}
+								<input type="hidden" name="did" value="None">
+								{% endif %}
+								<input type="hidden" name="tid" id="" value="{{datap.total}}">
+								{% if cop %}
+								<input type="hidden" name="cid" id="" value="{{cop}}">
+								{% else %}
+								<input type="hidden" name="cid" value="None">
+								{% endif %}
+
+								<div class="form-group">
+									<div class="d-grid">
+										<button type="submit" style="background-color: #335179;"
+											class="btn btn-sm btn-block mb-4" name="cod">Cash on delivery</button>
+									</div>
+									<!-- Set up a container element for the button -->
+									<div id="paypal-button-container"></div>
+									<script
+										src="https://www.paypal.com/sdk/js?client-id=AR0Sg9xOA6Wlph4QGwFOphraViEGOwYJzHImJ4Hu7IKymgaZoqZitD0QxcWvNPkuyDqSYqPH30va7D8k&currency=USD"></script>
+									<script>
+
+
+
+										const my_address = document.querySelector('.my_address');
+										my_address.checked = true;
+
+										console.log(my_address);
+									</script>
+									<script>
+										// Render the PayPal button into #paypal-button-container
+										paypal.Buttons({
+
+											// Set up the transaction
+											createOrder: function (data, actions) {
+												return actions.order.create({
+													purchase_units: [{
+														amount: {
+															value: '{{datap.total}}'
+														}
+													}]
+												});
+											},
+
+											// Finalize the transaction
+											onApprove: function (data, actions) {
+												return actions.order.capture().then(function (orderData) {
+													// Successful capture! For demo purposes:
+													console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+													var transaction = orderData.purchase_units[0].payments.captures[0];
+													alert('Transaction ' + transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
+
+													document.getElementById("myform").submit()
+													// Replace the above to show a success message within this page, e.g.
+													// const element = document.getElementById('paypal-button-container');
+													// element.innerHTML = '';
+													// element.innerHTML = '<h3>Thank you for your payment!</h3>';
+													// Or go to another URL:  actions.redirect('thank_you.html');
+												});
+											}
+
+
+										}).render('#paypal-button-container');
+
+									</script>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+				</form>
+
+			</div>
+		</div>
+		<!-- </form> -->
+		<!-- </form> -->
+	</div>
+</div>
+{% endblock %}

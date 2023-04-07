@@ -1,0 +1,181 @@
+{% extends 'user.html' %}
+{% load static %}
+<style>
+    .text-bold {
+        font-weight: 800;
+    }
+
+    text-color {
+        color: #0093c4;
+    }
+
+    /* Main image - left */
+    .main-img img {
+        width: 100%;
+    }
+
+    /* Preview images */
+    .previews img {
+        width: 100%;
+        height: 140px;
+    }
+
+    .main-description .category {
+        text-transform: uppercase;
+        color: #0093c4;
+    }
+
+    .main-description .product-title {
+        font-size: 2.5rem;
+    }
+
+    .old-price-discount {
+        font-weight: 600;
+    }
+
+    .new-price {
+        font-size: 2rem;
+    }
+
+    .details-title {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #757575;
+    }
+
+    .buttons .block {
+        margin-right: 5px;
+    }
+
+    .quantity input {
+        border-radius: 0;
+        height: 40px;
+
+    }
+
+
+    .custom-btn {
+        text-transform: capitalize;
+        background-color: #0093c4;
+        color: white;
+        width: 150px;
+        height: 40px;
+        border-radius: 0;
+    }
+
+    .custom-btn:hover {
+        background-color: #0093c4 !important;
+        font-size: 18px;
+        color: white !important;
+    }
+
+    .similar-product img {
+        height: 400px;
+    }
+
+    .similar-product {
+        text-align: left;
+    }
+
+    .similar-product .title {
+        margin: 17px 0px 4px 0px;
+    }
+
+    .similar-product .price {
+        font-weight: bold;
+    }
+
+    .questions .icon i {
+        font-size: 2rem;
+    }
+
+    .questions-icon {
+        font-size: 2rem;
+        color: #0093c4;
+    }
+
+
+    /* Small devices (landscape phones, less than 768px) */
+    @media (max-width: 767.98px) {
+
+        /* Make preview images responsive  */
+        .previews img {
+            width: 100%;
+            height: auto;
+        }
+
+    }
+</style>
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="main-img thumb-image">
+                <img class="img-fluid" src="../media/{{d.image}}" alt="Product" data-imagezoom="true">
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="main-description px-2">
+                <div class="category text-bold">
+                    <p class="h2 text-dark">{{d.productname}}</p>
+                </div>
+                <div class="product-title text-bold my-3">
+                    Category : <b class="text-dark">{{d.category.categoryname}}</b>
+                </div>
+
+
+                <div class="price-area my-4">
+                    {% if d.offerpercentage %}
+                    <p class="new-price text-bold mb-1 text-dark">
+                    <p class="old-price mb-1 text-dark">Original price : <del><i
+                                class="fa-solid fa-indian-rupee-sign"></i>&nbsp;<b>{{d.price}}</b></del> <span
+                            class="old-price-discount text-danger">&nbsp;<b>({{d.offerpercentage}}%
+                            off)</b></span></p>
+                    {% endif %}
+                    <p class="new-price text-bold mb-1 text-dark">Current price : <i
+                            class="fa-solid fa-indian-rupee-sign"></i>&nbsp;<b>{{d.discountprice}}</b></p>
+                    <p class="text-secondary mb-1">(Does not apply additional tax on checkout)</p>
+
+                </div>
+
+                <div class="product-details my-4">
+                    <p class="details-title text-color mb-1">Product Details</p>
+                    <p class="description text-dark">{{d.description}} </p>
+                </div>
+
+                <form method="post" action="{% url 'addtocart' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="pid" id="" value="{{d.productid}}">
+                    <div class="buttons d-flex my-5">
+                        <div class="block">
+                            <button type="submit" class="shadow btn custom-btn">Add to cart</button>
+                        </div>
+
+                    </div>
+                </form>
+
+
+
+
+            </div>
+
+
+
+            
+            <div class="delivery my-4">
+                <p class="font-weight-bold mb-0"><span><i class="fa-solid fa-truck"></i></span> <b>Delivery done in
+                        3 days from date of purchase</b> </p>
+                <p class="text-secondary">Order now to get this product delivery</p>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="{% static 'js/image.js' %}"></script>
+{% endblock %}

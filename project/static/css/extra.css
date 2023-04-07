@@ -1,0 +1,52 @@
+.district{
+    background-color: #e9ecef;
+    height:200px ;
+    margin-left: 250px;
+    width: 1200px;
+}
+.content{
+    color: black;
+    padding-left: 104px;
+    padding-top: 50px;
+    margin-right: 100px;
+}
+.input{
+   margin-left: 100px;
+   width: 30px;
+   height: 40px;
+   padding-right: 60px;
+}
+#button{
+    color: rgb(244, 248, 244);
+    margin-left: 100px;
+    margin-top: 10px;
+    background-color: red;
+}
+#district{
+    margin-left: 60px;
+}
+.state{
+    margin-left: 320px;
+    margin-bottom: 500px;
+}
+.location{
+    background-color: rgb(0, 255, 221);
+    height:200px ;
+    margin-left: 250px;
+    width: 1200px;
+}
+.select{
+    margin-left: 100px;
+    width: 30px;
+    height: 40px;
+    padding-right: 60px;
+}
+.dis{
+    color: black;
+    padding-left: 104px;
+    padding-top: 50px;
+    margin-right: 100px;
+}
+.table{
+    margin-left:239px
+}

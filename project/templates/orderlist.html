@@ -1,0 +1,223 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block heading %}
+<h1>Order list</h1>
+{% endblock %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">Order list</li>
+{% endblock %}
+
+{% block content %}
+{% if not data %}
+<div class="table-responsive mt-3">
+    <p class="h2 text-center"><b>Order list is empty</b></p>
+</div>
+{% else %}
+<div class="col-12 mb-3">
+    <form method="post" action="{% url 'createpdf' %}" class="bg-secondary p-3">
+        {% csrf_token %}
+        <div class="row mx-auto">
+            <div class="col-auto mt-1 text-white">
+                <b>Sales report</b>
+            </div>
+            <div class="col-auto p-0">
+                <input type="date" class="form-control" placeholder="Input 1" name="fromdate" required>
+            </div>
+            <div class="col-auto">
+                <input type="date" class="form-control" placeholder="Input 2" name="todate" required>
+            </div>
+            <div class="col-auto">
+                <button type="submit" name="pdf" class="btn btn-primary">Download Pdf</button>
+            </div>
+            <div class="col-auto">
+                <button type="submit" name="excel" class="btn btn-secondary">Download Excel</button>
+            </div>
+        </div>
+    </form>
+</div>
+<form class="d-none d-md-flex input-group w-auto my-auto" method="post" action="{% url 'orderlist' %}">
+    {% csrf_token %}
+    <input autocomplete="off" type="search" class="form-control rounded" name="search"
+        placeholder='Search (ctrl + "/" to focus)' style="min-width:50vh" />
+    <button class="btn" type="submit" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+</form>
+<div class="table-responsive mt-3">
+    <table class="table table-hover table-bordered table-secondary">
+        <thead>
+            <tr>
+                <th scope="col">Si.no</th>
+                <th scope="col">orderid</th>
+                <th scope="col">Username</th>
+                <th scope="col">Order status</th>
+                <th scope="col">Total amount</th>
+                <th scope="col">Payment method</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr>
+                <td scope="row">{{forloop.counter}}</td>
+                <td>{{d.orderid}}</td>
+                <td>{{d.user.username}}</td>
+                <td>{{d.status}}</td>
+                <td>{{d.totalamount}}</td>
+                <td>{{d.paymentmode}}</td>
+                <td>
+                    {% if d.status == 'cancelled by user' or d.status == 'cancelled by admin' %}
+                    <p class="text-danger fw-bolder">Order cancelled</p>
+                    {% elif d.status == 'completed' %}
+                    <p class="text-success fw-bolder">Order Completed</p>
+                    {% elif d.status == 'return requested' %}
+                    <form action="{% url 'refund' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{d.orderid}}" name="oid" id="">
+                        <button class="btn btn-primary">Refund</button>
+                    </form>
+                    {% elif d.status == 'refunded' %}
+                    <p class="text-danger fw-bolder">order returned and refunded</p>
+                    {% elif d.status == 'shipped'}
+                    <div class="btn-group ">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Action
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-danger" data-bs-toggle="modal"
+                                    data-bs-target="#cancel-{{d.orderid}}" href="#"><i
+                                        class="fa-solid fa-ban"></i>Cancel</a></li>
+                            <li><a class="dropdown-item text-success" data-bs-toggle="modal"
+                                    data-bs-target="#complete-{{d.orderid}}" href="#"><i
+                                        class="fa-solid fa-check"></i></i>Completed</a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div class="btn-group ">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Action
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-primary" data-bs-toggle="modal"
+                                    data-bs-target="#shipped-{{d.orderid}}" href="#"><i
+                                        class="fa-solid fa-truck"></i>Shipped</a></li>
+                            <li><a class="dropdown-item text-danger" data-bs-toggle="modal"
+                                    data-bs-target="#cancel-{{d.orderid}}" href="#"><i
+                                        class="fa-solid fa-ban"></i>Cancel</a></li>
+                            <li><a class="dropdown-item text-success" data-bs-toggle="modal"
+                                    data-bs-target="#complete-{{d.orderid}}" href="#"><i
+                                        class="fa-solid fa-check"></i></i>Completed</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </td>
+                <!-- shipped -->
+                <div class="modal fade" id="shipped-{{d.orderid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'shipped' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.orderid}}" name="oid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-info">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Shipped
+                                        <!-- <a class="ms-2" style="color: black;">{{d.categoryname}}</a> -->
+                                    </h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <i class="fa-solid fa-truck fa-4x text-info d-flex justify-content-center"></i><br>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-danger me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-info">confirm</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- cancel -->
+                <div class="modal fade" id="cancel-{{d.orderid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'cancel' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.orderid}}" name="cid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Cancel order <a
+                                            class="ms-2" style="color: black;">{{d.categoryname}}</a></h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <i
+                                        class="fas fa-exclamation-triangle fa-4x text-danger d-flex justify-content-center"></i><br>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-warning me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-danger">cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- complete -->
+                <div class="modal fade" id="complete-{{d.orderid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'completed' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.orderid}}" name="cid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Order delivered<a
+                                            class="ms-2" style="color: black;"></a></h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <i class="fas fa-check fa-4x text-success d-flex justify-content-center"></i><br>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-warning me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-success">Delivered</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+</div>
+<div class="pagination mx-3">
+    <span class="step-links">
+        {% if data.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ data.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ data.number }} of {{ data.paginator.num_pages }}.
+        </span>
+
+        {% if data.has_next %}
+        <a href="?page={{ data.next_page_number }}">next</a>
+        <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+{% endblock %}

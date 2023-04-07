@@ -1,0 +1,35 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">Privacy</li>
+{% endblock %}
+
+{% block heading %}
+<h1>Privacy</h1>
+{% endblock %}
+
+{% block content %}
+<div class="card login-form p-5">
+	<div class="card-body">
+		<h3 class="card-title text-center"><b>Reset password</b></h3>
+		
+		<div class="card-text mt-4">
+			<form method="post" action="{% url 'aprivacy' %}">
+                {% csrf_token %}
+				<div class="form-group w-50">
+					<label for="exampleInputEmail1">New password</label>
+					<input type="password" class="form-control mt-2" name="password" placeholder="" required>
+				</div>
+                <div class="form-group w-50 mt-4">
+					<label for="exampleInputEmail1">Re-enter New password</label>
+					<input type="password" class="form-control mt-2" name="repassword" placeholder="" required>
+				</div>
+
+				<button type="submit" class="btn btn-primary mt-4">Reset</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

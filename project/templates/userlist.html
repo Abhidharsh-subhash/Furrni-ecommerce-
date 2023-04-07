@@ -1,0 +1,130 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block heading %}
+<h1>User's list</h1>
+{% endblock %}
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">User's list</li>
+{% endblock %}
+
+{% block content %}
+{% if not data %}
+<div class="table-responsive mt-3">
+    <p class="h3 text-center"><b>Seach result not found</b></p>
+</div>
+{% else %}
+<form class="d-none d-md-flex input-group w-auto my-auto" method="post" action="{% url 'userlist' %}">
+    {% csrf_token %}
+    <input autocomplete="off" type="search" class="form-control rounded" name="search"
+        placeholder='Search (ctrl + "/" to focus)' style="min-width:50vh" />
+    <button class="btn" type="submit" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+</form>
+<div class="table-responsive mt-3">
+    <table class="table table-hover table-bordered table-secondary ">
+        <thead>
+            <tr>
+                <th scope="col">Si.no</th>
+                <th scope="col">Mail-id</th>
+                <th scope="col">Phone no</th>
+                <th scope="col">Username</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr>
+                <th scope="row">{{forloop.counter}}</th>
+                <td>{{d.email}}</td>
+                <td>{{d.phone}}</td>
+                <td>{{d.username}}</td>
+                <td>
+                    {% if d.role == 'user' %}
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-rounded" data-bs-toggle="modal"
+                        data-bs-target="#block-{{d.userid}}">Block</button>
+                    <!-- data-mdb-ripple-color="dark" -->
+                    {% elif d.role == 'blocked' %}
+                    <button type="button" class="btn btn-sm btn-outline-success btn-rounded" data-bs-toggle="modal"
+                        data-bs-target="#unblock-{{d.userid}}">Unblock</button>
+                    {% endif %}
+                </td>
+                <!-- block -->
+                <div class="modal fade" id="block-{{d.userid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'blockusr' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.userid}}" name="uid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Block <a class="ms-2" style="color: antiquewhite;"><b>{{d.email}}</b></a></h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <i
+                                        class="fas fa-exclamation-triangle fa-4x text-danger d-flex justify-content-center"></i><br>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-warning me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-danger">Block</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- unblock -->
+                <div class="modal fade" id="unblock-{{d.userid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'unblockusr' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.userid}}" name="uid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Unblock <a
+                                            class="ms-2" style="color: black;">{{d.logid.username}}</a></h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <i
+                                        class="fas fa-circle-check fa-4x text-success d-flex justify-content-center"></i><br>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-warning me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-success">Unblock</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+</div>
+<div class="pagination mx-3">
+    <span class="step-links">
+        {% if data.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ data.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ data.number }} of {{ data.paginator.num_pages }}.
+        </span>
+
+        {% if data.has_next %}
+            <a href="?page={{ data.next_page_number }}">next</a>
+            <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+{% endblock %}

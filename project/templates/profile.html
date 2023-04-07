@@ -1,0 +1,382 @@
+{% extends 'user.html' %}
+{% load static %}
+
+{% block content %}
+<section class="mb-5">
+    <div class="container py-5">
+
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show mt-2 timer" role="alert">
+            <i class="mx-2 fas fa-thumbs-up"></i>
+            <strong>{{message}}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+
+        <div class="row mt-5">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-circle fa-4x" style="width: 150px;"></i>
+                        <h5 class="my-3 mb-3">{{d.username}}</h5>
+                        <div class="d-flex justify-content-center mb-2">
+                            <button type="button" class="btn btn-outline-primary ms-1" data-bs-toggle="modal"
+                                data-bs-target="#edits-{{d.userid}}">Edit profile</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card p-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Username</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-dark mb-0"><b>{{d.username}}</b></p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Phone number</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-dark mb-0"><b>{{d.phone}}</b></p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Email address</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-dark mb-0"><b>{{d.email}}</b></p>
+                            </div>
+                        </div>
+                        <hr>
+                        {% if not dataa %}
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Address</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-dark mb-0"><b>No address added yet</b></p>
+                            </div>
+                            <div class="col-sm-3">
+                                <p class="mb-0"></p>
+                            </div>
+                            <div class="col-sm-9">
+                                <button type="button" class="btn btn-light" data-bs-toggle="modal"
+                                    style="background-color: white;color: black;" data-bs-target="#addaddress"
+                                    data-bs-ripple-color="dark">Add new address</button>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="row">
+                            {% for d in dataa %}
+                            {% if forloop.first %}
+                            <div class="col-sm-3">
+                                <p class="mb-0">Address</p>
+                            </div>
+                            {% else %}
+                            <div class="col-sm-3">
+                                <p class="mb-0"></p>
+                            </div>
+                            {% endif %}
+                            <div class="col-sm-9 d-flex">
+                                <div style="flex: auto;">
+                                    <p class="text-dark mb-0"><b>{{d.street}},{{d.postalcode}},{{d.state}}</b></p>
+                                    <p class="text-dark mb-0"><b>{{d.phone}}</b></p>
+                                </div>
+                                <div>
+                                    <div class="btn-group me-5" role="group"
+                                        aria-label="Button group with nested dropdown">
+                                        <button type="button" class="btn btn-outline-warning"
+                                            style="color: rgb(188, 162, 46);" data-bs-toggle="modal"
+                                            data-bs-target="#edit-{{d.addressid}}">Edit</button>&nbsp;
+                                        <button type="button" class="btn btn-outline-danger" style="color: red;"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#delete-{{d.addressid}}">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Edit -->
+                            <div class="modal fade" id="edit-{{d.addressid}}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <form action="{% url 'editaddress' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="aid" value="{{d.addressid}}">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-light">
+                                                <p class="modal-title h4" id="exampleModalLabel"><b>Edit address</b>
+                                                </p>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="container">
+                                                    <div class="row mb-4">
+                                                        <div class="col">
+                                                            <div class="form-outline-dark">
+                                                                <label class="form-label" for="form3Example1">First
+                                                                    name</label>
+                                                                <input type="text" id="form3Example1" name="firstname" required
+                                                                    value="{{d.firstname}}" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-outline-dark">
+                                                                <label class="form-label" for="form3Example2">Last
+                                                                    name</label>
+                                                                <input type="text" id="form3Example2" name="lastname" required
+                                                                    value="{{d.lastname}}" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col">
+                                                            <div class="form-outline-dark">
+                                                                <label class="form-label"
+                                                                    for="form3Example1">Street</label>
+                                                                <input type="text" id="form3Example1" name="street" required
+                                                                    value="{{d.street}}" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-outline-dark">
+                                                                <label class="form-label"
+                                                                    for="form3Example2">State</label>
+                                                                <input type="text" id="form3Example2" name="state" required
+                                                                    value="{{d.state}}" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col">
+                                                            <div class="form-outline-dark">
+                                                                <label class="form-label"
+                                                                    for="form3Example1">Postalcode</label>
+                                                                <input type="text" id="form3Example1" name="postalcode" required
+                                                                    value="{{d.postalcode}}" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-outline-dark">
+                                                                <label class="form-label"
+                                                                    for="form3Example2">Mail</label>
+                                                                <input type="text" id="form3Example2" name="mail" required
+                                                                    value="{{d.mail}}" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-6">
+                                                            <div class="form-outline-dark">
+                                                                <label class="form-label"
+                                                                    for="form3Example1">Phone</label>
+                                                                <input type="text" id="form3Example1" name="phone" required
+                                                                    value="{{d.phone}}" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Edit -->
+                            <!-- Delete -->
+                            <div class="modal fade" id="delete-{{d.addressid}}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <form method="post" enctype="multipart/form-data" action="{% url 'deladdress' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" value="{{d.addressid}}" name="aid">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger">
+                                                <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">
+                                                    Delete Address</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <i
+                                                    class="fas fa-exclamation-triangle fa-4x text-danger d-flex justify-content-center"></i><br>
+                                            </div>
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn me-3"
+                                                    style="background-color: rgb(167, 137, 39);"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn" style="background-color: #d34646;">Delete</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Delete -->
+                            {% endfor %}
+                            <div class="col-sm-3">
+                                <p class="mb-0"></p>
+                            </div>
+                            <div class="col-sm-9">
+                                <button type="button" class="btn" data-bs-toggle="modal"
+                                    style="background-color: white;color: black;" data-bs-target="#addaddress"
+                                    data-bs-ripple-color="dark">Add new address</button>
+                            </div>
+
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- add address -->
+                <div class="modal fade" id="addaddress" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <form action="{% url 'newaddress' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="uid" id="" value="{{d.userid}}">
+                            <div class="modal-content">
+                                <div class="modal-header bg-light">
+                                    <p class="modal-title h4" id="exampleModalLabel"><b>Add address</b>
+                                    </p>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container">
+                                        <div class="row mb-4">
+                                            <div class="col">
+                                                <div class="form-outline-dark">
+                                                    <label class="form-label" for="form3Example1">First
+                                                        name</label>
+                                                    <input type="text" id="form3Example1" name="firstname" required
+                                                        class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-outline-dark">
+                                                    <label class="form-label" for="form3Example2">Last
+                                                        name</label>
+                                                    <input type="text" id="form3Example2" name="lastname" required
+                                                        class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4">
+                                            <div class="col">
+                                                <div class="form-outline-dark">
+                                                    <label class="form-label" for="form3Example1">Street</label>
+                                                    <input type="text" id="form3Example1" name="street" required
+                                                        class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-outline-dark">
+                                                    <label class="form-label" for="form3Example2">State</label>
+                                                    <input type="text" id="form3Example2" name="state" required
+                                                        class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4">
+                                            <div class="col">
+                                                <div class="form-outline-dark">
+                                                    <label class="form-label" for="form3Example1">Postalcode</label>
+                                                    <input type="text" id="form3Example1" name="postalcode" required
+                                                        class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-outline-dark">
+                                                    <label class="form-label" for="form3Example2">Mail</label>
+                                                    <input type="text" id="form3Example2" name="mail" required
+                                                        class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4">
+                                            <div class="col-6">
+                                                <div class="form-outline-dark">
+                                                    <label class="form-label" for="form3Example1">Phone</label>
+                                                    <input type="text" id="form3Example1" name="phone" required
+                                                        class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Add new</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- add address -->
+            </div>
+        </div>
+    </div>
+</section>
+<!-- edit -->
+<div class="modal right fade" id="edits-{{d.userid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+    <div class="modal-dialog modal-side modal-top-right ">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <p class="modal-title h4" id="exampleModalLabel"><b>Profile Update</b></p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body mt-1">
+                <form method="post" action="{% url 'updateprofile' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="uid" value="{{d.userid}}">
+                    <div class="form-outline-dark mb-4">
+                        <label class="form-label" for="form1Example1">Username</label>
+                        <input type="text" id="form1Example1" pattern="[A-Za-z]+" minlength="5" required
+                            title="it can be only alphabets and should be 5 atleast" value="{{d.username}}"
+                            class="form-control" name="username" style="height: 5vh;" />
+                    </div>
+                    <div class="form-outline-dark mb-4">
+                        <label class="form-label" for="form1Example1">Phone number</label>
+                        <input type="number" required id="form1Example1" value="{{d.phone}}" class="form-control"
+                            pattern="[0-9]+" minlength="10" maxlength="10" title="phone number should have 10 digits"
+                            name="phone" style="height: 5vh;" />
+                    </div>
+                    <div class="form-outline-dark mb-4">
+                        <label class="form-label" for="form1Example1">Email address</label>
+                        <input readonly type="email" id="form1Example1" value="{{d.email}}" class="form-control"
+                            name="email" style="height: 5vh;" />
+                    </div>
+                    <div class="modal-footer mt-1">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"
+    integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+<script>
+    setTimeout(function () {
+        $(".timer").remove();
+    }, 2000); // 5000ms = 5s
+
+</script>
+{% endblock %}

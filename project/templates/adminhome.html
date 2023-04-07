@@ -1,0 +1,217 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block heading %}
+<h1>Dashboard</h1>
+{% endblock %}
+
+{% block content %}
+<div class="col-xxl-4 col-md-6">
+  <div class="card info-card sales-card">
+
+    <div class="filter">
+      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="fa-sharp fa-solid fa-filter"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+        <li class="dropdown-header text-start">
+          <h6>Filter</h6>
+        </li>
+
+        <li><a class="dropdown-item" href="#">Today</a></li>
+        <li><a class="dropdown-item" href="#">This Month</a></li>
+        <li><a class="dropdown-item" href="#">This Year</a></li>
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <h5 class="card-title">Total users</h5>
+
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+          <i class="fa-sharp fa-solid fa-users"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{users}}</h6>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="col-xxl-4 col-md-6">
+  <div class="card info-card revenue-card">
+
+    <div class="filter">
+      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="fa-sharp fa-solid fa-filter"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+        <li class="dropdown-header text-start">
+          <h6>Filter</h6>
+        </li>
+
+        <li><a class="dropdown-item" href="#">Today</a></li>
+        <li><a class="dropdown-item" href="#">This Month</a></li>
+        <li><a class="dropdown-item" href="#">This Year</a></li>
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <h5 class="card-title">Total products</span></h5>
+
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+          <i class="fa-sharp fa-solid fa-couch"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{products}}</h6>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="col-xxl-4 col-xl-12">
+
+  <div class="card info-card customers-card">
+
+    <div class="filter">
+      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="fa-sharp fa-solid fa-filter"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+        <li class="dropdown-header text-start">
+          <h6>Filter</h6>
+        </li>
+
+        <li><a class="dropdown-item" href="#">Today</a></li>
+        <li><a class="dropdown-item" href="#">This Month</a></li>
+        <li><a class="dropdown-item" href="#">This Year</a></li>
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <h5 class="card-title">Total orders</span></h5>
+
+      <div class="d-flex align-items-center">
+        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+          <i class="fa-sharp fa-solid fa-cart-shopping"></i>
+        </div>
+        <div class="ps-3">
+          <h6>{{orders}}</h6>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<!-- <div class="col-12 mb-2">
+  <form method="post" action="{% url 'createpdf' %}">
+    {% csrf_token %}
+    <div class="row mx-auto">
+      <div class="col-auto mt-1">
+        <b>Sales report</b>
+      </div>
+      <div class="col-auto p-0">
+        <input type="date" class="form-control" placeholder="Input 1" name="fromdate" required >
+      </div>
+      <div class="col-auto">
+        <input type="date" class="form-control" placeholder="Input 2" name="todate" required>
+      </div>
+      <div class="col-auto">
+        <button type="submit" name="pdf" class="btn btn-primary">Download Pdf</button>
+      </div>
+      <div class="col-auto">
+        <button type="submit" name="excel" class="btn btn-secondary">Download Excel</button>
+      </div>
+    </div>
+  </form>
+</div> -->
+
+<div class="col-12">
+  <div class="card">
+
+    <div class="filter">
+      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="fa-sharp fa-solid fa-filter"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+        <li class="dropdown-header text-start">
+          <h6>Filter</h6>
+        </li>
+
+        <li><a class="dropdown-item" href="#">Today</a></li>
+        <li><a class="dropdown-item" href="#">This Month</a></li>
+        <li><a class="dropdown-item" href="#">This Year</a></li>
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <h5 class="card-title">Reports <span>/Daily-basis</span></h5>
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <div class="card-body">
+      <h5 class="card-title">Orders <span>/status report</span></h5>
+      <canvas id="myCharts"></canvas>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('myChart');
+  const labels = {{ months| safe }}
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Orders By Month',
+        data: {{ total_orders }},
+    backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+    ],
+    borderWidth: 1
+  }]
+          },
+    options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+        });
+</script>
+<script>
+  const ct = document.getElementById('myCharts');
+  const label = ['completed', 'cancelled', 'shipped', 'waiting']
+
+  new Chart(ct, {
+    type: 'doughnut',
+    data: {
+      labels: label,
+      datasets: [{
+        label: 'Orders By Month',
+        data: [{{ datac }}, {{ dataca }},{{ datas }}, {{ dataw }}],
+    backgroundColor: [
+    'rgb(153, 255, 51)',
+    'rgb(255, 0, 0)',
+    'rgb(51, 102, 255)',
+    'rgb(255, 163, 26)'
+  ],
+    borderWidth: 1
+  }]
+          },
+    options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+        });
+</script>
+
+
+{% endblock %}

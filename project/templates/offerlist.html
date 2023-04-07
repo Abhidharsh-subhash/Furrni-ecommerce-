@@ -1,0 +1,171 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block heading %}
+<h1>Offer list</h1>
+{% endblock %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">Offer list</li>
+{% endblock %}
+
+{% block content %}
+{% if not data %}
+<div class="table-responsive mt-3">
+    <p class="h3 text-center"><b>No offer added yet</b></p>
+</div>
+{% else %}
+<form class="d-none d-md-flex input-group w-auto my-auto" method="post" action="{% url 'offerlist' %}">
+    {% csrf_token %}
+    <input autocomplete="off" type="search" class="form-control rounded" name="search"
+        placeholder='Search (ctrl + "/" to focus)' style="min-width:50vh" />
+    <button class="btn" type="submit" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+</form>
+<div class="table-responsive mt-3">
+    <table class="table table-hover table-bordered table-secondary text-center">
+        <thead>
+            <tr>
+                <th scope="col">SI.no</th>
+                <th scope="col">Offer name</th>
+                <th scope="col">Offer code</th>
+                <th scope="col">Offer percentage</th>
+                <th scope="col">expiry date</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr>
+                <th scope="row">{{forloop.counter}}</th>
+                <td>{{d.couponname}}</td>
+                <td>{{d.couponcode}}</td>
+                <td>{{d.percentage}}%</td>
+                <td>{{d.expirytdate}}</td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Action
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-warning" data-bs-toggle="modal"
+                                    data-bs-target="#edit-{{d.couponid}}" href="#"><i
+                                        class=" fa-solid fa-pen-to-square"></i>Edit</a></li>
+                            <li><a class="dropdown-item text-danger" data-bs-toggle="modal"
+                                    data-bs-target="#delete-{{d.couponid}}" href="#"><i
+                                        class="fa-solid fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </div>
+                </td>
+
+                <!-- delete -->
+                <div class="modal fade" id="delete-{{d.couponid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'deloffer' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.couponid}}" name="cid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Delete <a
+                                            class="ms-2" style="color: black;">{{d.couponname}}</a></h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <i
+                                        class="fas fa-exclamation-triangle fa-4x text-danger d-flex justify-content-center"></i><br>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-warning me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- edit -->
+                <div class="modal fade" id="edit-{{d.couponid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'updateoffer' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.couponid}}" name="cid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Edit <a class="ms-2"
+                                            style="color: black;">{{d.couponname}}</a></h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label" for="form4Example1">Coupon name</label>
+                                        <input type="text" id="form4Example1" name="offername"
+                                            value="{{d.couponname}}" minlength="4" required
+                                            class="form-control" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label" for="form4Example1">Coupon code</label>
+                                        <input type="text" id="form4Example1" name="offercode"
+                                            value="{{d.couponcode}}" minlength="4" required
+                                            class="form-control" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label" for="form4Example1">Expiry date : {{d.expirytdate}}</label>
+                                        <input type="date" id="form4Example1" name="expirydate"
+                                            value="{{d.expirytdate}}"
+                                            class="form-control" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label class="form-label" for="form4Example1">Offer percentage</label>
+                                        <input type="text" id="form4Example1" name="offerpercentage"
+                                            value="{{d.percentage}}" minlength="1" required
+                                            class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-danger me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-info">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
+</div>
+<div class="pagination mx-3">
+    <span class="step-links">
+        {% if data.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ data.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ data.number }} of {{ data.paginator.num_pages }}.
+        </span>
+
+        {% if data.has_next %}
+            <a href="?page={{ data.next_page_number }}">next</a>
+            <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+{% endblock %}

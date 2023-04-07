@@ -1,0 +1,63 @@
+{% extends 'indexhead.html' %}
+{% load static %}
+
+{% block link %}
+<li><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+<li class="nav-item active"><a class="nav-link" href="{% url 'shop' %}">Products</a></li>
+<li><a class="nav-link" href="{% url 'about' %}">About us</a></li>
+<li><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+<li><a class="nav-link" href="{% url 'contact' %}">Contact us</a></li>
+<li><a class="nav-link" href="{% url 'userlogin' %}">login<img class="mx-2" src="{% static 'img/user.svg' %}"></a>
+</li>
+{% endblock %}
+
+{% block head %}
+<h1>Products</h1>
+{% endblock %}
+
+{% block content %}
+<div class="product-section" style="padding:0rem 0;margin-top: 3rem;">
+	<div class="container">
+		<div class="row">
+
+			{% for i in data %}
+			<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 mt-5">
+				<a class="product-item" href="{% url 'userlogin' %}">
+					<!-- <input type="hidden" name="pid" value="{{i.productid}}"> -->
+					<img src="../media/{{i.image}}"  style="width: 40vh;height: 40vh;" class="img-fluid product-thumbnail">
+					<h3 class="product-title">{{i.productname}}</h3>
+					<strong class="product-price">{{i.price}}</strong><br>
+					<p class="mx-2 h6">{{i.provider}}</p>
+					<!-- <span class="icon-cross">
+							<img src="{% static 'img/cross.svg' %}" class="img-fluid ">
+						</span> -->
+				</a>
+				<div class="mx-5">
+                    <div>
+                        <form method="post" enctype="multipart/form-data" action="{% url 'userlogin' %}">
+                            {% csrf_token %}
+                            <!-- <input type="hidden" value="{{i.productid}}" name="pid"> -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="fa-solid fa-lg fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- <div style="float: left;">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'userlogin' %}">
+                            {% csrf_token %}
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-sm btn-primary" style="color: rgb(225, 23, 23);background-color: white;">
+                                    <i class="fa-regular fa-lg fa-heart"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div> -->
+                </div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

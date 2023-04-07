@@ -1,0 +1,49 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block heading %}
+<h1>Add new Offer</h1>
+{% endblock %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">New Offer</li>
+{% endblock %}
+
+{% block content %}
+<form class="px-5" style="background-color: #d2dbe3;border-radius: 3vh;" method="post" action="{% url 'addoffer' %}">
+  {% csrf_token %}
+  <!-- 2 column grid layout with text inputs for the first and last names -->
+  <div class="row mb-4 mt-4">
+    <div class="col-6">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example1">Offer name</label>
+        <input type="text" name="offername" class="form-control" minlength="4" required/>
+
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example2">Offer code</label>
+        <input type="text" name="offercode" class="form-control" minlength="3" required/>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-4 mt-4">
+    <div class="col-6">
+        <div class="form-outline">
+          <label class="form-label mx-1" for="form6Example1">Expiry date</label>
+          <input type="date" name="expirydate" class="form-control" required/>
+        </div>
+      </div>
+    <div class="col-6">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example1">offer percentage</label>
+        <input type="number" name="offerpercentage" class="form-control" required minlength="1"/>
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-block mb-4 mt-2">Add offer</button>
+</form>
+{% endblock %}

@@ -1,0 +1,94 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <style>
+        @page {
+            size: a4 portrait;
+
+            @frame header_frame {
+                /* Static Frame */
+                -pdf-frame-content: header_content;
+                left: 50pt;
+                width: 512pt;
+                top: 50pt;
+                height: 40pt;
+            }
+
+            @frame content_frame {
+                /* Content Frame */
+                left: 50pt;
+                width: 512pt;
+                top: 80pt;
+                height: 632pt;
+            }
+
+            @frame footer_frame {
+                /* Another static Frame */
+                -pdf-frame-content: footer_content;
+                left: 50pt;
+                width: 512pt;
+                top: 772pt;
+                height: 20pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Content for Static Frame 'header_frame' -->
+    <div id="header_content">
+        <h1>Furrni</h1>
+    </div>
+    <div id="content_frame">
+        <h3>Username : {{data.user.username}}</h3>
+        <h4>Order number 8{{data.ordernumber}}</h4>
+    </div>
+
+    <!-- Content for Static Frame 'footer_frame' -->
+    <div id="footer_content">(c) - page <pdf:pagenumber>
+            of <pdf:pagecount>
+    </div>
+
+    <!-- HTML Content -->
+
+    <hr>
+
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        {% for i in items %}
+        <tr>
+            <td>{{i.product.productname}}</td>
+            <td>{{i.quantity}}</td>
+            <td>{{i.product.discountprice}}</td>
+            <td>{% widthratio i.quantity 1 i.product.discountprice %} {% empty %}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <hr>
+
+    <p><strong>Address:
+            {{data.address.street}}.{{data.address.state}},{{data.address.postalcode}}<br>
+            {{data.address.phone}},{{data.address.mail}}</strong>
+    </p>
+    <p>Payment :
+        {% if data.paymentmode == 'cod' %}
+        Cash on delivery
+        {% else %}
+        Paypal
+        {% endif %}
+    </p>
+    {% if data.coupon %}
+    <p>Coupon applied : {{data.coupon.couponname}}({{data.coupon.percentage}}% discount)</p>
+    {% else %}
+    {% endif %}
+    <p><strong>Total: Rs {{data.totalamount}}</strong></p>
+</body>
+
+</html>

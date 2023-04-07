@@ -1,0 +1,87 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block heading %}
+<h1>Add new product</h1>
+{% endblock %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">New product</li>
+{% endblock %}
+
+{% block content %}
+<form class="px-5" style="background-color: #d2dbe3;border-radius: 3vh;" method="post" enctype="multipart/form-data" action="{% url 'adpro' %}">
+  {% csrf_token %}
+  <!-- 2 column grid layout with text inputs for the first and last names -->
+  <div class="row mb-4 mt-4">
+    <div class="col-6">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example1">Product name</label>
+        <input type="text" name="productname" class="form-control" minlength="4" required/>
+
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example2">Quantity</label>
+        <input type="number" name="quantity" class="form-control" minlength="1" required/>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row mb-4 mt-4">
+    <div class="col-6">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example1">Product category</label>
+        <!-- <input type="text" name="category" class="form-control" /> -->
+        <select name="category" class="form-control" required>
+          <option value=" ">---select---</option>
+            {% for d in data %}
+            <option value="{{d.categoryid}}">{{d.categoryname}}</option>
+            {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example1">Price</label>
+        <input type="number" name="price" class="form-control" required minlength="2"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mt-4">
+    <div class="col-6">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example1">Product image</label>
+        <input type="file" name="image" class="form-control" required/>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example1">Provider name</label>
+        <input type="text" name="provider" class="form-control" required/>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mt-4">
+    <div class="col-6">
+      <div class="form-outline">
+        <label class="form-label mx-1" for="form6Example1">Description</label>
+        <textarea type="text" name="description" class="form-control" required></textarea>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Submit button -->
+  <button type="submit" class="btn btn-primary btn-block mb-4">Add</button>
+</form>
+{% endblock %}
+{% block script %}
+<script defer src="https://cdn.crop.guide/loader/l.js?c=GFQPYL"></script>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends 'user.html' %}
+{% load static %}
+{% block input %}
+<form class="input-group m-auto w-100" style="max-width: 300px;" method="post" action="{% url 'userhome' %}">
+    {% csrf_token %}
+    <input autocomplete="off" type="search" class="form-control rounded" name="search" value="{{s}}"
+        placeholder='Search (ctrl + "/" to focus)' style="max-width:76%;" />
+    <button class="btn" type="submit" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+</form>
+
+{% endblock %}
+{% block content %}
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show mt-2 mx-5 timer" role="alert"><i
+        class=" mx-2 fa-sharp fa-solid fa-triangle-exclamation"></i>
+    <strong>{{message}}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+<div class="container mt-4">
+    <div class="row mx-1" style="display: flex; justify-content: space-between;">
+        {% if data %}
+        <div class="col-md-2">
+            <a href="{% url 'userhome' %}" style="text-decoration: none;">
+                <div class="card border-0 shadow mb-3">
+                    <div class="card-body text-center">
+                        <p class="card-title mb-0 h5"><b>All products</b></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% else %}
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <div class="my-5">
+                        <h2>No products found</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% for d in datac %}
+        <div class="col-md-2">
+            <a href="{% url 'categorywise' %}?datac={{d.categoryid}}" style="text-decoration: none;">
+                <div class="card border-0 shadow mb-3">
+                    <div class="card-body text-center">
+                        <p class="card-title mb-0 h5"><b>{{d.categoryname}}</b></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+        {% if data %}
+
+        <div class="mt-2 row g-3">
+            <div class="col-auto">
+                <label for="price_range" class="form-label visually-hidden">Select price range</label>
+                <div class="input-group">
+                    <select class="form-select rounded-end" id="price_range">
+                        <option value="">Select price range</option>
+                        <option value="low_to_high">Price : Low to High</option>
+                        <option value="high_to_low">Price : High to Low</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-auto">
+                <form class="row g-3" method="post" action="{% url 'userhome' %}">
+                    {% csrf_token %}
+                    <div class="col-auto">
+                        <label for="min_price" class="form-label visually-hidden">Enter min price</label>
+                        <div class="input-group">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-indian-rupee-sign mx-1"></i></span>
+                            <input type="number" class="form-control-sm rounded-end" id="min_price" name="min" value="{{min}}"
+                                placeholder="Minimum price">
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <label for="max_price" class="form-label visually-hidden">Enter max price</label>
+                        <div class="input-group">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-indian-rupee-sign mx-1"></i></span>
+                            <input type="number" class="form-control-sm rounded-end" id="max_price" name="max" value="{{max}}"
+                                placeholder="Maximum price">
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" name="filter" class="btn" style="font-size: 13px;padding: 0.30rem 0.7rem;line-height: 2.2;"><i class="fa-solid fa-filter"></i> Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% endif %}
+
+    </div>
+    <div class="product-section" style="padding:2rem 0;">
+        <div class="container">
+            <div class="row" id="content">
+
+
+                {% for i in data %}
+                <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 mt-5">
+                    <form method="post" action="">
+                        <a class="product-item" href="{% url 'productdetail' %}?id={{i.productid}}">
+                            <input type="hidden" name="pid" value="{{i.productid}}">
+                            <img src="../media/{{i.image}}" style="width: 40vh;height: 40vh;"
+                                class="img-fluid product-thumbnail zoom">
+                            <!-- class=zoomable -->
+                            <p class="product-title h4">{{i.productname}}</p>
+                            <strong class="product-price">{{i.discountprice}}&emsp;
+                                {% if i.offerpercentage %}
+                                <span class="text-success">{{i.offerpercentage}}% off</span>
+                                {% endif %}
+                            </strong><br>
+                            <p class="mx-2 h6 mt-1">{{i.provider}}</p>
+                        </a>
+                    </form>
+                    <div class="mx-5">
+                        <div>
+                            <form method="post" enctype="multipart/form-data" action="{% url 'addtocart' %}">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{i.productid}}" name="pid">
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="fa-solid fa-lg fa-cart-plus"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    {% block script %}
+    <script>
+        setTimeout(function () {
+            $(".timer").remove();
+        }, 2000); // 2000ms = 2s
+
+    </script>
+    <script>
+        document.getElementById("price_range").addEventListener("change", function () {
+            var selectedOption = this.value;
+            console.log(selectedOption)
+            priceSort();
+            // Send the selected option to the server
+            function priceSort() {
+                window.location.href = `/userhome?price_range=${selectedOption}`
+                // let data = await fetch("/userhome?price_range=" + selectedOption);
+                // data = await data.json();
+            }
+
+
+
+           
+        });
+
+    </script>
+    {% endblock %}

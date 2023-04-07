@@ -1,0 +1,31 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block heading %}
+<h1>Add new Category</h1>
+{% endblock %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">New Category</li>
+{% endblock %}
+
+{% block content %}
+<div class=" d-flex">
+    <!-- justify-content-center align-items-center -->
+    <div class="col-md-6 p-5 shadow-sm border rounded-3">
+        <!-- <h2 class="text-center mb-4 text-primary">Login Form</h2> -->
+        <form method="post" enctype="multipart/form-data" action="{% url 'caty' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Category name</label>
+                <input type="text" class="form-control-lg border border-primary" name="categoryname" style="width: 25rem;" 
+                pattern="[A-Za-z]+" minlength="4" required>
+            </div>
+            <div class="">
+                <button class="btn btn-primary" type="submit">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

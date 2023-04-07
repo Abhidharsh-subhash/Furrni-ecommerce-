@@ -1,0 +1,227 @@
+{% extends 'user.html' %}
+{% load static %}
+
+{% block content %}
+{% if not data %}
+<div class="untree_co-section before-footer-section" style="padding: 0rem 0;">
+	<div class="container">
+		<div class="row d-flex justify-content-center">
+			<h2 class="text-center">Your cart is empty</h2>
+			<lottie-player src="https://assets9.lottiefiles.com/packages/lf20_mtojb2nn.json" background="transparent"
+				speed="1" style="width: 500px; height: 400px;" autoplay></lottie-player>
+		</div>
+	</div>
+</div>
+{% else %}
+<div class="untree_co-section before-footer-section" style="padding: 0rem 0;">
+	<div class="container">
+		<div class="row mb-5">
+			<form class="col-md-12" method="post">
+				<div class="site-blocks-table">
+					<table class="table">
+						<thead>
+							<tr>
+								<th class="product-thumbnail">Image</th>
+								<th class="product-name">Product</th>
+								<th class="product-price">Price</th>
+								<th class="product-quantity">Quantity</th>
+								<th class="product-quantity">Total</th>
+								<th class="product-remove">Remove</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in data %}
+							<div class="product_data">
+								<tr>
+									<td class="product-thumbnail">
+										<img src="../media/{{i.product.image}}" style="height: 25vh;width: 31vh;"
+											alt="Image" class="img-fluid">
+									</td>
+									<td class="product-name">
+										<h2 class="h5 text-black">{{i.product.productname}}</h2>
+									</td>
+									<td class="price">{{i.product.discountprice}}</td>
+									<div>
+										<td class="product-name">
+											<input type="hidden" name="prod_id" value="{{i.cartitemid}}" id="product_id">
+											{% csrf_token %}
+											<div class="input-group mb-3 d-flex align-items-center"
+												style="max-width: 120px;margin-left: 22%;">
+												<div class="input-group-prepend">
+													<button type="button"
+														class="input-group-text decrement-btn btn-danger" data-url="{{i.cartitemid}}">-</button>
+												</div>
+												<input type="text" class="form-control text-center quantity-amount qty-input" id="qt"
+													value="{{i.quantity}}" placeholder="" readonly
+													aria-label="Example text with button addon"
+													aria-describedby="button-addon1" id="product_qty">
+												<div class="input-group-append">
+												<button type="button"
+														class="input-group-text increment-btn btn-success" data-url="{{i.cartitemid}}">+</button>
+
+												</div>
+											</div>
+
+										</td>
+									</div>
+									<td class="total-price">{% widthratio i.product.discountprice 1 i.quantity %}</td>
+									<td><a href="{% url 'delcartitem' %}?id={{i.cartitemid}}"
+											class="btn btn-black btn-sm"><i class="fa-3x fa-solid fa-xmark"></i></a>
+									</td>
+								</tr>
+							</div>
+							{% endfor %}
+
+						</tbody>
+					</table>
+				</div>
+			</form>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="row mb-5">
+					<a href="{% url 'userhome' %}">
+						<div class="col-md-6">
+							<button class="btn btn-outline-black btn-sm btn-block">Continue Shopping</button>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div class="col-md-6 pl-5">
+				<div class="row justify-content-end">
+					<div class="col-md-7">
+						<div class="row">
+							<div class="col-md-12 text-right border-bottom mb-5">
+								<h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+							</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<span class="text-black">Number of products</span>
+							</div>
+							<div class="col-md-6 text-right">
+								<strong class="text-black total-quantity">{{datap.quantity}}</strong>
+							</div>
+						</div>
+						<div class="row mb-5">
+							<div class="col-md-6">
+								<span class="text-black">Total amount</span>
+							</div>
+							<div class="col-md-6 text-right">
+								<strong class="text-black total-amount">{{datap.total}}</strong>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12">
+								<a href="{% url 'checkout' %}?q={{datap.quantity}}&a={{datap.total}}">
+									<button class="btn btn-black btn-lg py-3 btn-block">Proceed To Checkout</button>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endif %}
+
+{% endblock %}
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	const cartContainer = document.querySelector('.table');
+	var token = $('input[name=csrfmiddlewaretoken]').val();
+   if(cartContainer){
+	 cartContainer.addEventListener('click' , (e) => {
+		if(e.target.classList.contains('increment-btn')) {
+			// console.log(e.target.dataset.url);
+			$.ajax({
+				method : 'POST',
+				url : '/inccartitem',
+				data : {
+					'product_id':e.target.dataset.url,
+					// 'product_qty':product_qty,
+					csrfmiddlewaretoken:token
+				} ,
+				success:function(data){
+					// console.log(data.quantity)
+					console.log(data)
+					e.target.parentNode.parentNode.childNodes[3].value = data.quantity;
+					const price = e.target.parentNode.parentNode.parentNode.parentNode.querySelector('.price').textContent;
+					e.target.parentNode.parentNode.parentNode.parentNode.querySelector('.total-price').textContent = data.quantity * price ;
+					console.log(price);
+					document.querySelector('.total-amount').textContent = data.total ;
+					document.querySelector('.total-quantity').textContent = data.qt ;
+					if(data.quantity >= data.qty) {
+						e.target.disabled = true;
+					}
+					// alertify.success(response.status)
+				}
+			})
+		}
+		if(e.target.classList.contains('decrement-btn')) {
+			// console.log(e.target.dataset.url)
+			$.ajax({
+				method : 'POST',
+				url : '/deccartitem',
+				data : {
+					'product_id':e.target.dataset.url,
+					// 'product_qty':product_qty,
+					csrfmiddlewaretoken:token
+				} ,
+				success:function(data){
+					console.log(data);
+				    e.target.parentNode.parentNode.childNodes[3].value = data.quantity;
+					const price = e.target.parentNode.parentNode.parentNode.parentNode.querySelector('.price').textContent;
+					e.target.parentNode.parentNode.parentNode.parentNode.querySelector('.total-price').textContent = data.quantity * price ;
+					document.querySelector('.total-amount').textContent = data.total ;
+					document.querySelector('.total-quantity').textContent = data.qt ;
+					if(data.quantity < 2) {
+						e.target.disabled = true;
+					}
+
+					// document.getElementById("qt").innerText = data.quantity;
+				}
+			})
+		}
+	 })
+   }
+
+
+   
+
+
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+<!-- $('.changequantity').click(function (e){
+	e.preventDefault()
+
+	// var product_id = $(this).closest('.product_data').find('prod_id').val();
+	// var product_qty = $(this).closest('.product_data').find('qty-input').val();
+	// var token = $('input[name=csrfmiddlewaretoken]').val();
+	// console.log(document.getElementById('product_id').value);
+	// console.log(document.getElementById('product_qty').value);
+
+
+   
+
+
+
+
+	// console.log(product_id)
+	// console.log(product_qty)
+	
+}) -->

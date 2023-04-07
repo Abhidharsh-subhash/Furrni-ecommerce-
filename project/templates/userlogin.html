@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+  <title>Login</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="{% static 'user/css/style.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+  <!-- <style>
+    .a {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      --s: 25vmin;
+      --p: calc(var(--s) / 2);
+      --c1: pink;
+      --c2: dodgerblue;
+      --c3: white;
+      --bg: var(--c3);
+      --d: 4000ms;
+      --e: cubic-bezier(0.76, 0, 0.24, 1);
+
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(45deg, var(--c1) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--c1) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--c2) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--c2) 75%);
+      background-size: var(--s) var(--s);
+      background-position:
+        calc(var(--p) * 1) calc(var(--p) * 0),
+        calc(var(--p) * -1) calc(var(--p) * 1),
+        calc(var(--p) * 1) calc(var(--p) * -1),
+        calc(var(--p) * -1) calc(var(--p) * 0);
+      animation:
+        color var(--d) var(--e) infinite,
+        position var(--d) var(--e) infinite;
+    }
+
+    @keyframes color {
+
+      0%,
+      25% {
+        --bg: var(--c3);
+      }
+
+      26%,
+      50% {
+        --bg: var(--c1);
+      }
+
+      51%,
+      75% {
+        --bg: var(--c3);
+      }
+
+      76%,
+      100% {
+        --bg: var(--c2);
+      }
+    }
+
+    @keyframes position {
+      0% {
+        background-position:
+          calc(var(--p) * 1) calc(var(--p) * 0),
+          calc(var(--p) * -1) calc(var(--p) * 1),
+          calc(var(--p) * 1) calc(var(--p) * -1),
+          calc(var(--p) * -1) calc(var(--p) * 0);
+      }
+
+      25% {
+        background-position:
+          calc(var(--p) * 1) calc(var(--p) * 4),
+          calc(var(--p) * -1) calc(var(--p) * 5),
+          calc(var(--p) * 1) calc(var(--p) * 3),
+          calc(var(--p) * -1) calc(var(--p) * 4);
+      }
+
+      50% {
+        background-position:
+          calc(var(--p) * 3) calc(var(--p) * 8),
+          calc(var(--p) * -3) calc(var(--p) * 9),
+          calc(var(--p) * 2) calc(var(--p) * 7),
+          calc(var(--p) * -2) calc(var(--p) * 8);
+      }
+
+      75% {
+        background-position:
+          calc(var(--p) * 3) calc(var(--p) * 12),
+          calc(var(--p) * -3) calc(var(--p) * 13),
+          calc(var(--p) * 2) calc(var(--p) * 11),
+          calc(var(--p) * -2) calc(var(--p) * 12);
+      }
+
+      100% {
+        background-position:
+          calc(var(--p) * 5) calc(var(--p) * 16),
+          calc(var(--p) * -5) calc(var(--p) * 17),
+          calc(var(--p) * 5) calc(var(--p) * 15),
+          calc(var(--p) * -5) calc(var(--p) * 16);
+      }
+    }
+
+    @media (prefers-reduced-motion) {
+      body {
+        animation: none;
+      }
+    }
+  </style> -->
+
+</head>
+
+<body>
+  <section class="ftco-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-12 col-lg-10">
+          <div class="wrap d-md-flex">
+
+            <div class="img" style="background-image: url(/static/img/user.avif);">
+              <a class="a" href="{% url 'index' %}"></a>
+            </div>
+            <div class="login-wrap p-4 p-md-5">
+              <div class="d-flex">
+                <div class="w-100">
+                  <h3 class="mb-4">Sign In</h3>
+                </div>
+                
+              </div>
+              <form action="{% url 'logi' %}" class="signin-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                  <label class="label" for="name">Username</label>
+                  <input type="text" class="form-control" name="username" placeholder="Username" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label class="label" for="password">Password</label>
+                  <input type="password" class="form-control" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])[a-zA-Z0-9!@#\$%\^&\*]{6,}"
+                  title="Password must contain at least 6 characters, one uppercase letter, one lowercase letter, one number, and one special character" name="password" placeholder="Password" required>
+                </div>
+                {% for message in messages %}
+                <div class="alert alert-{{message.tags}} alert-warning alert-dismissible fade show timer" role="alert">
+                  <i class=" mx-2 fa-sharp fa-solid fa-triangle-exclamation"></i>
+                  <strong>{{message}}</strong>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                <div class="form-group mt-4">
+                  <button type="submit" class="form-control btn btn-primary rounded submit px-3">Sign
+                    In</button>
+                </div>
+                <div class="form-group d-md-flex">
+                  <div class="w-50 text-left">
+                    
+                  </div>
+                  <div class="w-50 text-md-right">
+                    <a href="{% url 'forgot' %}">Forgot Password</a>
+                  </div>
+                </div>
+              </form>
+              <p class="text-center">Not a member? <a href="{% url 'usersignup' %}">Sign Up</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    setTimeout(function () {
+      $(".timer").remove();
+    }, 2000); // 2000ms = 2s
+
+  </script>
+  <script src="{% static 'user/js/jquery.min.js' %}"></script>
+  <script src="{% static 'user/js/popper.js' %}"></script>
+  <script src="{% static 'user/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'user/js/main.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+    integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>

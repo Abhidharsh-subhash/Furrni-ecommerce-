@@ -1,0 +1,81 @@
+{% extends 'admin.html' %}
+{% load static %}
+
+{% block heading %}
+<h1>Banner list</h1>
+{% endblock %}
+
+{% block head %}
+<li class="breadcrumb-item"><a href="{% url 'adminhome' %}">Home</a></li>
+<li class="breadcrumb-item active">Banner list</li>
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive mt-3">
+    <table class="table table-hover table-bordered table-secondary text-center">
+        <thead>
+            <tr>
+                <th scope="col">SI.no</th>
+                <th scope="col">Image</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr>
+                <th scope="row">{{forloop.counter}}</th>
+                <td><img src="../media/{{d.banner}}" class="img-fluid" style="height: 15vh;width: 20vh;"></td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-rounded" data-bs-toggle="modal"
+                        data-bs-target="#delete-{{d.bannerid}}">Delete</button>        
+                </td>
+                <!-- block -->
+                <div class="modal fade" id="delete-{{d.bannerid}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'delbanner' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{d.bannerid}}" name="bid">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger">
+                                    <h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Delete the banner</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <i
+                                        class="fas fa-exclamation-triangle fa-4x text-danger d-flex justify-content-center"></i><br>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-outline-warning me-3"
+                                        data-bs-dismiss="modal">No</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+</div>
+<div class="pagination mx-3">
+    <span class="step-links">
+        {% if data.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ data.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ data.number }} of {{ data.paginator.num_pages }}.
+        </span>
+
+        {% if data.has_next %}
+            <a href="?page={{ data.next_page_number }}">next</a>
+            <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

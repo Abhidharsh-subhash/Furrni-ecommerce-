@@ -1,0 +1,91 @@
+{% extends 'user.html' %}
+{% load static %}
+<style>
+    .product-sectiion {
+        padding: 3rem 0;
+    }
+    
+</style>
+<script>
+    setTimeout(function () {
+        $(".timer").remove();
+    }, 2000); // 5000ms = 5s
+
+</script>
+{% block content %}
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show mt-2 mx-5 timer" role="alert"><i
+        class=" mx-2 fa-sharp fa-solid fa-triangle-exclamation"></i>
+    <strong>{{message}}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+<div class="container mt-4">
+    <div class="row mx-1" style="display: flex; justify-content: space-between;">
+        <div class="col-md-2">
+            <a href="{% url 'userhome' %}" style="text-decoration: none;">
+                <div class="card border-0 shadow mb-3">
+                    <div class="card-body text-center">
+                        <p class="card-title mb-0 h5"><b>All products</b></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% for d in data %}
+        <div class="col-md-2">
+            <a href="{% url 'categorywise' %}?datac={{d.categoryid}}" style="text-decoration: none;">
+                <div class="card border-0 shadow mb-3">
+                    <div class="card-body text-center">
+                        <p class="card-title mb-0 h5"><b>{{d.categoryname}}</b></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="product-section" style="padding:2rem 0;">
+    <div class="container">
+        <div class="row">
+
+            {% if not datap %}
+            <div class="mt-3 text-center">
+                <p class="h3">No items in this category</p>
+            </div>
+            {% else %}
+
+            {% for i in datap %}
+            <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0 mt-5">
+                <form method="post" action="">
+                    <a class="product-item" href="{% url 'productdetail' %}?id={{i.productid}}">
+                        <input type="hidden" name="pid" value="{{i.productid}}">
+                        <img src="../media/{{i.image}}" style="width: 40vh;height: 40vh;"
+                            class="img-fluid product-thumbnail zoom">
+                        <!-- class=zoomable -->
+                        <p class="product-title h4">{{i.productname}}</p>
+                        <strong class="product-price">{{i.price}}</strong><br>
+                        <p class="mx-2 h6 mt-1">{{i.provider}}</p>
+                      
+                    </a>
+                </form>
+                <div class="mx-5">
+                    <div>
+                        <form method="post" enctype="multipart/form-data" action="{% url 'addtocart' %}">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{i.productid}}" name="pid">
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="fa-solid fa-lg fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

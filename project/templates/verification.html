@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+	<title>Admin login</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<link rel="stylesheet" href="{% static 'css/style1.css' %}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+		crossorigin="anonymous"></script>
+
+
+</head>
+
+<body>
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-7 col-lg-5">
+					<div class="wrap">
+						<div class="img" style="background-image: url(/static/img/log.jpg);"></div>
+						<div class="login-wrap p-4 p-md-5">
+							<div class="d-flex">
+								<div class="w-100">
+									<h3 class="mb-4"><b>Otp Verification</b></h3>
+								</div>
+								<!-- <div class="w-100">
+									<p class="social-media d-flex justify-content-end">
+										<a href="#"
+											class="social-icon d-flex align-items-center justify-content-center"><span
+												class="fa fa-facebook"></span></a>
+										<a href="#"
+											class="social-icon d-flex align-items-center justify-content-center"><span
+												class="fa fa-twitter"></span></a>
+									</p>
+								</div> -->
+							</div>
+							{% for message in messages %}
+							<div class="alert alert-{{message.tags}} alert-dismissible fade show mt-2 timer" role="alert"><i
+									class=" mx-2 fa-sharp fa-solid fa-triangle-exclamation"></i>
+								<strong>{{message}}</strong>
+								<button type="button" class="btn-close" data-bs-dismiss="alert"
+									aria-label="Close"></button>
+							</div>
+							{% endfor %}
+							<form action="" method="post" class="signin-form">
+								{% csrf_token %}
+								<div class="input-container d-flex flex-row justify-content-center mt-2">
+									<input type="text" class="m-1 text-center form-control rounded" name="1" oninput="moveToNext(this, event)"
+										maxlength="1" required>
+									<input type="text" class="m-1 text-center form-control rounded" name="2" oninput="moveToNext(this, event)"
+										maxlength="1" required>
+									<input type="text" class="m-1 text-center form-control rounded" name="3" oninput="moveToNext(this, event)"
+										maxlength="1" required>
+									<input type="text" class="m-1 text-center form-control rounded" name="4" oninput="moveToNext(this, event)"
+										maxlength="1" required>
+									<input type="text" class="m-1 text-center form-control rounded" name="5" oninput="moveToNext(this, event)"
+										maxlength="1" required>
+									<input type="text" class="m-1 text-center form-control rounded" name="6" oninput="moveToNext(this, event)"
+										maxlength="1" required>
+								</div>
+								<div class="form-group mt-3">
+									<button type="submit"
+										class="form-control btn btn-primary rounded submit px-3">Verify OTP</button>
+							</form>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script>
+		setTimeout(function () {
+		  $(".timer").remove();
+		}, 2000); // 5000ms = 5s
+	
+	  </script>
+	<script>
+		function moveToNext(input, event) {
+			if (input.value.length === input.maxLength) {
+				input.nextElementSibling.focus();
+			}
+		}
+	</script>
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/popper.js' %}"></script>
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/main.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+		integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+		integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
+		crossorigin="anonymous"></script>
+
+</body>
+
+</html>
