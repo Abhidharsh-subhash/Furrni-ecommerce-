@@ -1,8 +1,8 @@
 # Furrni-ecommerce-
-In my e-commerce project, I developed a comprehensive website that encompasses essential features required for a successful online shopping experience. This includes user registration and authentication, product listing and search functionality, shopping cart management, order processing, and payment integration.
+In my e-commerce project, I developed a comprehensive website that incorporates essential features for a seamless online shopping experience. Users can register and authenticate themselves, browse and search for products, manage their shopping cart, process orders, and make secure payments through integrations with popular payment gateways like PayPal.
 
-To ensure a secure and seamless user experience, I implemented various integrations such as mail OTP verification, enabling users to verify their accounts and securely access the platform. Additionally, I integrated popular payment gateways like PayPal, allowing customers to make secure and convenient online payments.
+To ensure security and user verification, I implemented mail OTP verification, allowing users to validate their accounts securely. Furthermore, I hosted the website on AWS using Nginx as a reverse proxy and Gunicorn as the application server. This deployment setup ensures scalability, performance, and efficient handling of incoming requests.
 
-The website also includes features like order tracking functionalities to enhance user satisfaction. Responsive design and intuitive user interfaces were implemented to optimize the website for different devices and provide a smooth browsing experience.
+The website also includes order tracking functionalities, providing users with real-time updates on their orders. Additionally, responsive design techniques were employed to optimize the website for various devices, ensuring a seamless browsing experience across desktops, tablets, and mobile devices.
 
-Overall, my e-commerce project encompasses a wide range of features required for a successful online store, providing users with a secure, efficient, and enjoyable shopping experience.
+Overall, my e-commerce project incorporates a wide range of features, from user authentication and product management to secure payments and hosting on AWS. It provides users with a secure, efficient, and enjoyable online shopping experience.
